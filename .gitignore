@@ -88,7 +88,7 @@ StyleCopReport.xml
 *.tlh
 *.tmp
 *.tmp_proj
-*_wpftmp.csproj
+*_wpftmp/csproj
 *.log
 *.vspscc
 *.vssscc
@@ -360,3 +360,38 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# ----------------------------------------------------------------------------
+# GitLabNotify 项目特有配置
+# ----------------------------------------------------------------------------
+
+## Visual Studio / Rider / VSCode
+.idea/
+.vscode/
+*.csproj.user
+
+## 测试与覆盖率
+[Tt]rash-*/
+
+## 日志与运行时数据
+logs/
+data/
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+## Docker
+docker/data/
+docker/logs/
+.env
+
+## OS 文件
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+## NuGet
+.nuget/
+packages/

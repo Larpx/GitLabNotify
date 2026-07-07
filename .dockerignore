@@ -1,0 +1,15 @@
+# .dockerignore - 减少构建上下文体积
+**/bin/
+**/obj/
+**/logs/
+**/data/
+**/TestResults/
+.vs/
+.idea/
+.vscode/
+*.md
+docker/data/
+docker/logs/
+.env
+*.db
+*.db-*

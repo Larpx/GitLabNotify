@@ -1,0 +1,82 @@
+# ============================================================================
+# GitLabNotify docker-compose 配置
+# ============================================================================
+# 使用方式：
+#   1. 复制 .env.example 为 .env 并填写配置
+#   2. docker-compose up -d
+#
+# 配置优先级（从高到低）：
+#   1. 环境变量（本文件中 environment 段）
+#   2. 挂载的自定义 appsettings.json（取消下方 volumes 注释即可）
+#   3. 镜像内置的 appsettings.json
+# ============================================================================
+
+services:
+  gitlabnotify:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: gitlabnotify:latest
+    container_name: gitlabnotify
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-8080}:8080"
+    environment:
+      # --- 运行环境 ---
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+
+      # --- GitLab Webhook 鉴权 ---
+      # Secret Token，必须与 GitLab 端配置一致（支持多个实例时配置多个 Secret）
+      - GitLab__WebhookSecrets__0=${GITLAB_WEBHOOK_SECRET:-}
+
+      # --- 目标平台 0（默认企业微信）---
+      - Targets__0__Name=${TARGET_0_NAME:-企业微信群机器人}
+      - Targets__0__Type=${TARGET_0_TYPE:-WechatWork}
+      - Targets__0__Url=${TARGET_0_URL:-}
+      - Targets__0__Enabled=${TARGET_0_ENABLED:-true}
+
+      # --- 目标平台 1（可选，如钉钉）---
+      - Targets__1__Name=${TARGET_1_NAME:-}
+      - Targets__1__Type=${TARGET_1_TYPE:-}
+      - Targets__1__Url=${TARGET_1_URL:-}
+      - Targets__1__Enabled=${TARGET_1_ENABLED:-false}
+
+      # --- 目标平台 2（可选，如飞书）---
+      - Targets__2__Name=${TARGET_2_NAME:-}
+      - Targets__2__Type=${TARGET_2_TYPE:-}
+      - Targets__2__Url=${TARGET_2_URL:-}
+      - Targets__2__Enabled=${TARGET_2_ENABLED:-false}
+
+      # --- 处理管线 ---
+      # 失败重试次数（默认 3）
+      - Pipeline__MaxRetryCount=${PIPELINE_MAX_RETRY:-3}
+      # 初始重试延迟秒数（默认 5，指数退避：5s→10s→20s）
+      - Pipeline__InitialRetryDelaySeconds=${PIPELINE_RETRY_DELAY:-5}
+      # 队列容量（默认 1000）
+      - Pipeline__ChannelCapacity=${PIPELINE_CAPACITY:-1000}
+
+      # --- 持久化 ---
+      - Persistence__ConnectionString=${DB_CONNECTION:-Data Source=/app/data/gitlabnotify.db}
+
+      # --- 日志 ---
+      # 日志级别：Verbose/Debug/Information/Warning/Error/Fatal
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+    volumes:
+      # 持久化 SQLite 数据库
+      - ./data:/app/data
+      # 持久化日志文件
+      - ./logs:/app/logs
+      # 如需完整自定义配置，可挂载自定义 appsettings.json（取消下行注释）
+      # - ./appsettings.json:/app/appsettings.json:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"

@@ -1,0 +1,49 @@
+# ----------------------------------------------------------------------------
+# .gitignore - GitLabNotify 项目
+# ----------------------------------------------------------------------------
+
+## .NET 构建产物
+**/bin/
+**/obj/
+**/artifacts/
+*.user
+*.suo
+*.userprefs
+*.csproj.user
+
+## Visual Studio / Rider / VSCode
+.vs/
+.idea/
+.vscode/
+*.vspscc
+*.vssscc
+
+## 测试与覆盖率
+*.coverage
+*.coveragexml
+TestResults/
+[Tt]rash-*/
+
+## 日志与运行时数据
+*.log
+logs/
+data/
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+## Docker
+docker/data/
+
+## OS 文件
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/

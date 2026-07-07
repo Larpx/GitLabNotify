@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- 容器友好：禁用 VS 遥测等运行时文件 -->
+    <EnableSDKContainerSupport>false</EnableSDKContainerSupport>
+    <!-- 版本信息 -->
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- SQLite 原生提供程序 -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0" />
+    <!-- Dapper 轻量 ORM -->
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <!-- Serilog 结构化日志 -->
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <!-- 健康检查 -->
+    <PackageReference Include="AspNetCore.HealthChecks.Sqlite" Version="9.0.0" />
+    <!-- Swagger/OpenAPI（开发调试用） -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.0.0" />
+  </ItemGroup>
+
+</Project>

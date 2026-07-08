@@ -1,8 +1,8 @@
 using FluentAssertions;
-using GitLabNotify.Models;
-using GitLabNotify.Services;
+using Larpx.PersonalTools.GitLabNotify.Models;
+using Larpx.PersonalTools.GitLabNotify.Services;
 
-namespace GitLabNotify.Tests.Models;
+namespace Larpx.PersonalTools.GitLabNotify.Tests.Models;
 
 /// <summary>
 /// TargetOptions 配置模型测试

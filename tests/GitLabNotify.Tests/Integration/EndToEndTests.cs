@@ -1,12 +1,10 @@
-using System.Net;
-using System.Net.Http.Json;
 using FluentAssertions;
-using GitLabNotify.Data;
-using GitLabNotify.Models;
-using Microsoft.AspNetCore.Mvc.Testing;
+using Larpx.PersonalTools.GitLabNotify.Data;
+using Larpx.PersonalTools.GitLabNotify.Models;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 
-namespace GitLabNotify.Tests.Integration;
+namespace Larpx.PersonalTools.GitLabNotify.Tests.Integration;
 
 /// <summary>
 /// 端到端集成测试

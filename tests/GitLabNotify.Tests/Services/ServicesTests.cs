@@ -1,13 +1,12 @@
 using FluentAssertions;
-using GitLabNotify.Data;
-using GitLabNotify.Models;
-using GitLabNotify.Services;
-using GitLabNotify.Targets;
+using Larpx.PersonalTools.GitLabNotify.Data;
+using Larpx.PersonalTools.GitLabNotify.Models;
+using Larpx.PersonalTools.GitLabNotify.Services;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
 
-namespace GitLabNotify.Tests.Services;
+namespace Larpx.PersonalTools.GitLabNotify.Tests.Services;
 
 /// <summary>
 /// WebhookProcessor 处理器测试（重试逻辑、状态流转）
@@ -195,6 +194,7 @@ public class WebhookDispatcherTests : IDisposable
         var processorMock = new Mock<IWebhookProcessor>();
         _pipeline = new WebhookPipeline(
             processorMock.Object,
+            _repository,
             pipelineOptions,
             NullLogger<WebhookPipeline>.Instance);
     }

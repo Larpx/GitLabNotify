@@ -1,15 +1,11 @@
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using GitLabNotify.Data;
-using GitLabNotify.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 
-namespace GitLabNotify.Tests.Integration;
+namespace Larpx.PersonalTools.GitLabNotify.Tests.Integration;
 
 /// <summary>
 /// 集成测试用 WebApplicationFactory

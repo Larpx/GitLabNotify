@@ -1,4 +1,4 @@
-namespace GitLabNotify.Tests;
+namespace Larpx.PersonalTools.GitLabNotify.Tests;
 
 /// <summary>
 /// 测试用数据样本

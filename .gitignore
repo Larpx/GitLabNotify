@@ -394,3 +394,5 @@ Desktop.ini
 ## NuGet
 .nuget/
 packages/
+
+.trae/

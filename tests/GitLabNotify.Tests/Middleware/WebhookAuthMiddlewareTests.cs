@@ -1,12 +1,12 @@
 using FluentAssertions;
-using GitLabNotify.Middleware;
-using GitLabNotify.Models;
+using Larpx.PersonalTools.GitLabNotify.Middleware;
+using Larpx.PersonalTools.GitLabNotify.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using System.Text;
 
-namespace GitLabNotify.Tests.Middleware;
+namespace Larpx.PersonalTools.GitLabNotify.Tests.Middleware;
 
 /// <summary>
 /// WebhookAuthMiddleware 鉴权中间件测试

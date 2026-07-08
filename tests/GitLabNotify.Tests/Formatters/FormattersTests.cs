@@ -1,9 +1,9 @@
-using System.Text.Json;
 using FluentAssertions;
-using GitLabNotify.Formatters;
-using GitLabNotify.Models;
+using Larpx.PersonalTools.GitLabNotify.Formatters;
+using Larpx.PersonalTools.GitLabNotify.Models;
+using System.Text.Json;
 
-namespace GitLabNotify.Tests.Formatters;
+namespace Larpx.PersonalTools.GitLabNotify.Tests.Formatters;
 
 /// <summary>
 /// 企业微信格式化器测试
@@ -26,7 +26,7 @@ public class WechatWorkFormatterTests
         result.Should().NotBeNullOrWhiteSpace();
 
         // 解析为 JSON 验证结构
-        var doc = JsonDocument.Parse(result);
+        var doc = JsonDocument.Parse(result!);
         doc.RootElement.GetProperty("msgtype").GetString().Should().Be("markdown");
         var content = doc.RootElement.GetProperty("markdown").GetProperty("content").GetString();
         content.Should().NotBeNullOrEmpty();
@@ -36,7 +36,7 @@ public class WechatWorkFormatterTests
     public void Format_PushEvent_ShouldContainProjectInfo()
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.PushEventPayload);
-        var content = JsonDocument.Parse(result).RootElement.GetProperty("markdown").GetProperty("content").GetString();
+        var content = JsonDocument.Parse(result!).RootElement.GetProperty("markdown").GetProperty("content").GetString();
 
         content.Should().Contain("mygroup/my-project");
         content.Should().Contain("main");
@@ -48,7 +48,7 @@ public class WechatWorkFormatterTests
     public void Format_PushEvent_ShouldContainCommitInfo()
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.PushEventPayload);
-        var content = JsonDocument.Parse(result).RootElement.GetProperty("markdown").GetProperty("content").GetString();
+        var content = JsonDocument.Parse(result!).RootElement.GetProperty("markdown").GetProperty("content").GetString();
 
         // 应包含第一条提交
         content.Should().Contain("修复登录问题");
@@ -59,7 +59,7 @@ public class WechatWorkFormatterTests
     public void Format_PushEvent_ShouldContainCommitUrl()
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.PushEventPayload);
-        var content = JsonDocument.Parse(result).RootElement.GetProperty("markdown").GetProperty("content").GetString();
+        var content = JsonDocument.Parse(result!).RootElement.GetProperty("markdown").GetProperty("content").GetString();
 
         content.Should().Contain("https://gitlab.example.com/mygroup/my-project/-/commit/f6e5d4c3b2a1");
     }
@@ -68,7 +68,7 @@ public class WechatWorkFormatterTests
     public void Format_PushEvent_ShouldContainSecondCommit()
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.PushEventPayload);
-        var content = JsonDocument.Parse(result).RootElement.GetProperty("markdown").GetProperty("content").GetString();
+        var content = JsonDocument.Parse(result!).RootElement.GetProperty("markdown").GetProperty("content").GetString();
 
         content.Should().Contain("新增用户管理模块");
         content.Should().Contain("a1b2c3d4");
@@ -78,32 +78,28 @@ public class WechatWorkFormatterTests
     public void Format_EmptyPush_ShouldNotContainCommitList()
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.EmptyPushPayload);
-        var content = JsonDocument.Parse(result).RootElement.GetProperty("markdown").GetProperty("content").GetString();
+        var content = JsonDocument.Parse(result!).RootElement.GetProperty("markdown").GetProperty("content").GetString();
 
         content.Should().Contain("推送通知");
         content.Should().Contain("0"); // 提交数 0
     }
 
     [Fact]
-    public void Format_InvalidJson_ShouldReturnTextErrorMessage()
+    public void Format_InvalidJson_ShouldReturnNull()
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.InvalidJson);
 
-        var doc = JsonDocument.Parse(result);
-        doc.RootElement.GetProperty("msgtype").GetString().Should().Be("text");
-        var content = doc.RootElement.GetProperty("text").GetProperty("content").GetString();
-        content.Should().Contain("错误");
+        // 格式化失败时返回 null,由 Processor 落库 Failed 而不发送,避免错误消息外发
+        result.Should().BeNull();
     }
 
     [Fact]
-    public void Format_UnsupportedEvent_ShouldReturnTextMessage()
+    public void Format_UnsupportedEvent_ShouldReturnNull()
     {
         var result = _formatter.Format(GitLabEventType.MergeRequest, TestSamples.PushEventPayload);
 
-        var doc = JsonDocument.Parse(result);
-        doc.RootElement.GetProperty("msgtype").GetString().Should().Be("text");
-        var content = doc.RootElement.GetProperty("text").GetProperty("content").GetString();
-        content.Should().Contain("暂不支持");
+        // 不支持的事件类型返回 null,同上由 Processor 落库 Failed
+        result.Should().BeNull();
     }
 
     [Fact]
@@ -135,7 +131,7 @@ public class DingTalkFormatterTests
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.PushEventPayload);
 
-        var doc = JsonDocument.Parse(result);
+        var doc = JsonDocument.Parse(result!);
         doc.RootElement.GetProperty("msgtype").GetString().Should().Be("markdown");
         var markdown = doc.RootElement.GetProperty("markdown");
 
@@ -147,7 +143,7 @@ public class DingTalkFormatterTests
     public void Format_PushEvent_ShouldContainKeyInfo()
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.PushEventPayload);
-        var text = JsonDocument.Parse(result).RootElement.GetProperty("markdown").GetProperty("text").GetString();
+        var text = JsonDocument.Parse(result!).RootElement.GetProperty("markdown").GetProperty("text").GetString();
 
         text.Should().Contain("mygroup/my-project");
         text.Should().Contain("main");
@@ -156,11 +152,12 @@ public class DingTalkFormatterTests
     }
 
     [Fact]
-    public void Format_InvalidJson_ShouldReturnTextError()
+    public void Format_InvalidJson_ShouldReturnNull()
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.InvalidJson);
-        var doc = JsonDocument.Parse(result);
-        doc.RootElement.GetProperty("msgtype").GetString().Should().Be("text");
+
+        // 格式化失败时返回 null,由 Processor 落库 Failed 而不发送
+        result.Should().BeNull();
     }
 }
 
@@ -182,7 +179,7 @@ public class FeishuFormatterTests
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.PushEventPayload);
 
-        var doc = JsonDocument.Parse(result);
+        var doc = JsonDocument.Parse(result!);
         doc.RootElement.GetProperty("msg_type").GetString().Should().Be("interactive");
 
         var card = doc.RootElement.GetProperty("card");
@@ -198,7 +195,7 @@ public class FeishuFormatterTests
     public void Format_PushEvent_ShouldContainKeyInfo()
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.PushEventPayload);
-        var doc = JsonDocument.Parse(result);
+        var doc = JsonDocument.Parse(result!);
         var elements = doc.RootElement.GetProperty("card").GetProperty("elements");
 
         // 第一个 div 元素应包含项目信息
@@ -212,7 +209,7 @@ public class FeishuFormatterTests
     public void Format_PushEvent_ShouldHaveCommitsElement_WhenHasCommits()
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.PushEventPayload);
-        var elements = JsonDocument.Parse(result).RootElement.GetProperty("card").GetProperty("elements");
+        var elements = JsonDocument.Parse(result!).RootElement.GetProperty("card").GetProperty("elements");
 
         elements.GetArrayLength().Should().BeGreaterThanOrEqualTo(2);
         var commitContent = elements[1].GetProperty("text").GetProperty("content").GetString();
@@ -224,17 +221,18 @@ public class FeishuFormatterTests
     public void Format_EmptyPush_ShouldHaveSingleElement()
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.EmptyPushPayload);
-        var elements = JsonDocument.Parse(result).RootElement.GetProperty("card").GetProperty("elements");
+        var elements = JsonDocument.Parse(result!).RootElement.GetProperty("card").GetProperty("elements");
 
         // 无提交时只有基本信息 div，没有提交记录 div
         elements.GetArrayLength().Should().Be(1);
     }
 
     [Fact]
-    public void Format_InvalidJson_ShouldReturnTextError()
+    public void Format_InvalidJson_ShouldReturnNull()
     {
         var result = _formatter.Format(GitLabEventType.Push, TestSamples.InvalidJson);
-        var doc = JsonDocument.Parse(result);
-        doc.RootElement.GetProperty("msg_type").GetString().Should().Be("text");
+
+        // 格式化失败时返回 null,由 Processor 落库 Failed 而不发送
+        result.Should().BeNull();
     }
 }

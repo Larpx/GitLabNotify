@@ -375,7 +375,6 @@ FodyWeavers.xsd
 
 ## 日志与运行时数据
 logs/
-data/
 *.db
 *.db-journal
 *.db-shm

@@ -22,6 +22,9 @@ RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS runtime
 WORKDIR /app
 
+# 切换 Alpine apk 源到阿里云镜像（国内服务器访问默认源 dl-cdn.alpinelinux.org 易超时）
+RUN sed -i 's|dl-cdn.alpinelinux.org|mirrors.aliyun.com|g' /etc/apk/repositories
+
 # 安装运行时依赖：
 # - icu-libs: ICU 全球化支持（SQLite 中文排序 + 中文消息编码需要）
 # - tzdata: 时区数据（日志时间戳正确显示）
